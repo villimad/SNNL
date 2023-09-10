@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+*.vcxproj
+*.sln
+*.cmake
+*.filters
+
+CMakeFiles/
+Debug/
+neural.dir/
+x64/
