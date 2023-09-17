@@ -1,10 +1,8 @@
 #include <iostream>
-#include "layer.hpp"
+#include "neuron.hpp"
+#include "sublayer.hpp"
 
 int main(void) {
-    std::cout << "Hello, World!" << std::endl;
-    Layer k{};
-    k.printh();
-
-    return 0;
+    Sigmoid activate {};
+    Neuron k[10] = Neuron{activate};
 }

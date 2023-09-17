@@ -1,6 +1,7 @@
 #include <vector>
+#include "./sublayer.hpp"
 
-class InternalLayersGroup;
+class SubLayer;
 
 class Layer
 {
@@ -8,13 +9,9 @@ class Layer
     The Layer unites neurons 
     */
     public:
+
     Layer() {};
     void printh();
 };
 
-class InternalLayersGroup
-{
-    /*
-    The SubLayers unites neurons into Layers
-    */
-};
+
