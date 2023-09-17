@@ -4,8 +4,7 @@
 
 struct Chain;
 
-class SubLayer
-{
+class SubLayer {
     /*
     The SubLayers unites neurons into Layers
     */
@@ -25,8 +24,7 @@ class SubLayer
     ~SubLayer();
 };
 
-struct Chain
-{
+struct Chain {
     unsigned long int number_connect_sub;
     std::vector<double> weight;
 };

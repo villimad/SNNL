@@ -1,8 +1,10 @@
 #include <iostream>
 #include "neuron.hpp"
 #include "sublayer.hpp"
+#include "mathfunc.hpp" 
 
 int main(void) {
-    Sigmoid activate {};
-    Neuron k[10] = Neuron{activate};
-}
+    long double k = MathFunc::randomNumber<long double>(0, 1);
+    std::cout << k << std::endl; 
+    return 1;
+};

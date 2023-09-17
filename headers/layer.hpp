@@ -3,15 +3,13 @@
 
 class SubLayer;
 
-class Layer
-{
+class Layer {
     /*
     The Layer unites neurons 
     */
     public:
 
     Layer() {};
-    void printh();
 };
 
 
