@@ -3,19 +3,29 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <random>
+#include <ctime>
+#include <cmath>
 
-class MathFunc
-{
+namespace MathFunc {
     /*
     Collection of specific mathematical functions
     */
-    public:
     template<typename TypeName>
-    static TypeName randomNumber(TypeName n_min, TypeName n_max) {
-        return 1;
+    TypeName randomNumber(TypeName n_min, TypeName n_max, int generator) {
+        // Get once random <TypeName> number
+        std::uniform_real_distribution<TypeName> dist{n_min, n_max};
+        std::default_random_engine engn{generator};
+        TypeName k = dist(engn);
+        return k; 
     };
 
-    static long double randomWeight(int count) {
-        
+    template<typename TypeName>
+    std::vector<TypeName>* createWeight(int count, TypeName n_min, TypeName n_max) {
+        std::vector<TypeName>* weight;
+        for (int q = 1; q < count + 2; q++) {
+            weight->push_back( randomNumber(n_min, n_max, q) * pow(-1, q) );
+        }
+        return weight;
     };
 }

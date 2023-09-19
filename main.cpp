@@ -4,7 +4,9 @@
 #include "mathfunc.hpp" 
 
 int main(void) {
-    long double k = MathFunc::randomNumber<long double>(0, 1);
-    std::cout << k << std::endl; 
+    std::vector<double> *k = MathFunc::createWeight<double>(728, 0, 1);
+    
+    std::cout << k->at(1) << std::endl;
+
     return 1;
 };
