@@ -1,20 +1,7 @@
 #include <vector>
-
-class InternalLayersGroup;
+#include "./sublayer.hpp"
 
 class Layer
 {
-    /*
-    The Layer unites neurons 
-    */
-    public:
-    Layer() {};
-    void printh();
-};
 
-class InternalLayersGroup
-{
-    /*
-    The SubLayers unites neurons into Layers
-    */
 };

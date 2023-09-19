@@ -1,10 +1,12 @@
 #include <iostream>
-#include "layer.hpp"
+#include "neuron.hpp"
+#include "sublayer.hpp"
+#include "mathfunc.hpp" 
 
 int main(void) {
-    std::cout << "Hello, World!" << std::endl;
-    Layer k{};
-    k.printh();
+    std::vector<double> *k = MathFunc::createWeight<double>(728, 0, 1);
+    
+    std::cout << k->at(1) << std::endl;
 
-    return 0;
-}
+    return 1;
+};
