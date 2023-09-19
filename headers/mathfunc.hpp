@@ -20,7 +20,7 @@ namespace MathFunc {
         return k; 
     };
 
-    template<typename TypeName>
+    template<typename TypeName>1
     std::vector<TypeName>* createWeight(int count, TypeName n_min, TypeName n_max) {
         std::vector<TypeName>* weight;
         for (int q = 1; q < count + 2; q++) {
@@ -29,3 +29,4 @@ namespace MathFunc {
         return weight;
     };
 }
+
