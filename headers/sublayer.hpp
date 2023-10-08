@@ -2,29 +2,35 @@
 #include <vector>
 #include "neuron.hpp"
 
-struct Chain;
+class Chain {
+public:
+    explicit Chain(
+            unsigned long int number_connect_sub = 0,
+            bool inputChain = false,
+            bool outputChain = false
+            )
+        : number_connect_sub{number_connect_sub}, inputChain{inputChain}, outputChain{outputChain}
+    {
+        if (inputChain && outputChain)
+            throw std::exception();
+    };
+    unsigned long int number_connect_sub;
+    bool inputChain;  // this sublayer - input ?
+    bool outputChain; // this sublayer - output ?
+};
 
 class SubLayer {
     /*
     The SubLayers unites neurons into Layers
     */
     public:
-    SubLayer(
-        std::vector<Neuron> neurons,
-        std::vector<unsigned long int> connect_sl, 
-        unsigned long int global_number, 
-        std::vector<Chain> connections
-        );
-
+    std::string graph_node;
+    Chain connection;
+    SubLayer(unsigned int global_number,Neuron neurons, unsigned int neuronsCount, Chain connection);
     private:
-    unsigned long int global_number;
-    std::vector<Neuron> neurons; 
-    std::vector<unsigned long int> connect_sl;
-    std::vector<Chain> connections;
-    ~SubLayer();
+    unsigned int global_number;
+    Neuron neurons;
+    unsigned int neuronsCount;
+    void textNode();
 };
 
-struct Chain {
-    unsigned long int number_connect_sub;
-    std::vector<double> weight;
-};
