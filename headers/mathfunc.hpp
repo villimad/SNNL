@@ -20,9 +20,9 @@ namespace MathFunc {
         return k; 
     };
 
-    template<typename TypeName>1
+    template<typename TypeName>
     std::vector<TypeName>* createWeight(int count, TypeName n_min, TypeName n_max) {
-        std::vector<TypeName>* weight;
+        std::vector<TypeName> *weight = new std::vector<TypeName>{};
         for (int q = 1; q < count + 2; q++) {
             weight->push_back( randomNumber(n_min, n_max, q) * pow(-1, q) );
         }

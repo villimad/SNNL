@@ -1,15 +1,26 @@
 #include "sublayer.hpp"
-#include "neuron.hpp"
-#include <vector>
+#include <string>
 
 SubLayer::SubLayer(
-    std::vector<Neuron> neurons, 
-    std::vector<unsigned long int> connect_sl,
-    unsigned long int global_number,
-    std::vector<Chain> connections
-    )
-    :neurons{neurons}, 
-    connect_sl{connect_sl},
-    global_number{global_number},
-    connections{connections}
-{};
+        unsigned int global_number,
+        Neuron neurons,
+        unsigned int neuronsCount,
+        Chain connection
+        )
+    :global_number{global_number}, neurons{neurons}, neuronsCount{neuronsCount}, connection{connection}
+{
+    textNode();
+};
+
+void SubLayer::textNode() {
+    std::string neuronTextNode = neurons.graph_node;
+    graph_node += "<Sublayer";
+    if (connection.inputChain) {
+        graph_node += " INPUT";
+    }
+    if (connection.outputChain) {
+        graph_node += " OUTPUT";
+    }
+    graph_node += " GN=" + std::to_string(global_number);
+    graph_node += " Neuron: {" + neurons.graph_node + "|" + "count=" +std::to_string(neuronsCount) + "}>";
+}
