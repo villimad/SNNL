@@ -33,3 +33,4 @@ class SubLayer {
     unsigned int neuronsCount;
     void textNode();
 };
+

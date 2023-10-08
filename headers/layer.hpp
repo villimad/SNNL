@@ -1,9 +1,11 @@
 #include <vector>
 #include <string>
+
 #include "./sublayer.hpp"
 
 class Layer
 {
+
 public:
     std::vector<SubLayer> vecSubLayer;
     std::string graph_node;
@@ -13,4 +15,5 @@ private:
     bool detectInputChain();
     bool detectOutputChain();
     void textNode();
+
 };
