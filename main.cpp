@@ -1,12 +1,20 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <memory>
+#include <string>
+#include "test.h"
+#include "blockbp.h"
+
 #define TEST Test test; test.run();
 
-#include <iostream>
-#include "headers/neuron.hpp"
-#include "headers/sublayer.hpp"
-#include "headers/mathfunc.hpp"
-#include "headers/test.h"
+using namespace std;
 
-int main(void) {
+int fact(int n);
+
+int main()
+{
     TEST
-    return 1;
-};
+}
+
+
