@@ -5,9 +5,9 @@
 #include <memory>
 #include <string>
 #include <algorithm>
-
-
-
+#include <cmath>
+#include <cassert>
+#include <stack>
 
 enum class Operation {
     Plus,   // +
@@ -19,7 +19,8 @@ enum class Operation {
     Relu,   // if (x >= 0) then x else 0
     D_Relu, // if (x >= 0) then 1 else 0
     Sigmoid,// 1 / (1 + exp(x))
-    Tanh   // ( exp(2x) - 1 ) / ( exp(2x) + 1 )
+    Tanh,   // ( exp(2x) - 1 ) / ( exp(2x) + 1 )
+    Ln      // Natural logarifm
 };
 
 
@@ -27,15 +28,14 @@ class Variable {
 public:
     std::string name;
     Variable(std::string name) :
-        name{name} {
-
-    };
+        name{name} 
+    {};
 };
+
 
 class BlockBP
 {
 public:
-
     BlockBP(std::shared_ptr<BlockBP> block) {
         value = block->value;
         var = block->var;
@@ -43,6 +43,8 @@ public:
         its_value_block = block->its_value_block;
         its_variable_block = block->its_variable_block;
         its_operation_block = block->its_operation_block;
+        its_original_block = false;
+        original_block = block;
         for (auto q : block->vec_blocks) {
             vec_blocks.push_back(q);
         }
@@ -103,16 +105,32 @@ public:
     }
 
     std::shared_ptr<BlockBP> first_block, second_block;
-    double value;
-    Operation operation;
+
+    double value = 0;
+    Operation operation = Operation::Plus;
     std::shared_ptr<Variable> var;
     std::vector<std::shared_ptr<BlockBP>> vec_blocks {};
-
-
     bool its_variable_block = false;
     bool its_value_block = false;
     bool its_operation_block = false;
     std::vector<std::shared_ptr<Variable>> var_list {};
+
+    bool its_original_block = true;
+    std::shared_ptr<BlockBP> original_block;
+
+    bool its_binary_operation() {
+        if (its_operation_block) {
+            if ((operation == Operation::Plus) ||
+                (operation == Operation::Minus) ||
+                (operation == Operation::Del) ||
+                (operation == Operation::Mul)
+                )
+            {
+                return true;
+            }
+            return false;
+        } 
+    }
 };
 
 
@@ -143,9 +161,9 @@ public:
                     run_found_block(block->vec_blocks.at(q), new_copy_block);
                 }
             } else {
-                if (block->operation == Operation::Plus or
-                        block->operation == Operation::Mul or
-                        block->operation == Operation::Del or
+                if (block->operation == Operation::Plus ||
+                        block->operation == Operation::Mul ||
+                        block->operation == Operation::Del ||
                         block->operation == Operation::Minus)
                 {
                 std::shared_ptr<BlockBP> first_copy_block = std::make_shared<BlockBP>(block->first_block);
@@ -164,8 +182,6 @@ public:
     };
 
 };
-
-
 
 class BackpropRec
 {
@@ -248,13 +264,22 @@ public:
         return res_block;
     }
 
-    std::shared_ptr<BlockBP> diffD_Relu(std::shared_ptr<Variable> var, std::shared_ptr<BlockBP> block) {
+    std::shared_ptr<BlockBP> diffD_Relu(std::shared_ptr<Variable>, std::shared_ptr<BlockBP>) {
         double value = 0;
         std::shared_ptr<BlockBP> res_block = std::make_shared<BlockBP>(value);
         return res_block;
     }
 
     // Relu end
+
+    std::shared_ptr<BlockBP> diffLn(std::shared_ptr<Variable> var, std::shared_ptr<BlockBP> block) {
+        std::shared_ptr<BlockBP> mul1 =  diff(var, block);
+        std::shared_ptr<BlockBP> val = std::make_shared<BlockBP>(1);
+        std::shared_ptr<BlockBP> mul2 = std::make_shared<BlockBP>(val, block, Operation::Del);
+        std::shared_ptr<BlockBP> res_block = std::make_shared<BlockBP>(mul1, mul2, Operation::Mul);
+        return res_block;
+    }
+
 
     std::shared_ptr<BlockBP> diffSigmoid(std::shared_ptr<Variable> var, std::shared_ptr<BlockBP> block) {
         double minus_one = -1;
@@ -269,7 +294,7 @@ public:
     }
 
     std::shared_ptr<BlockBP> diff_var_block(std::shared_ptr<Variable> var, std::shared_ptr<BlockBP> block) {
-        if (not block->its_variable_block) {
+        if (!block->its_variable_block) {
             throw std::exception();
         }
 
@@ -285,12 +310,12 @@ public:
     }
 
     std::shared_ptr<BlockBP> diff_value_block(std::shared_ptr<BlockBP> block) {
-        if (not block->its_value_block) {
+        if (!block->its_value_block) {
+
             throw std::exception();
         }
         return std::make_shared<BlockBP>(0);
     }
-
 
     std::shared_ptr<BlockBP> diff(std::shared_ptr<Variable> var, std::shared_ptr<BlockBP> c_block) {
 
@@ -299,7 +324,6 @@ public:
         std::shared_ptr<BlockBP> block = copy_block.res_block;
 
         if (block->its_operation_block) {
-
             if (block->operation == Operation::Mul) {
                 return diffMul(var, block->first_block, block->second_block);
             }
@@ -336,6 +360,9 @@ public:
                 return diffSigmoid(var, block->first_block);
             }
 
+            if (block->operation == Operation::Ln) {
+                return diffLn(var, block->first_block);
+            }
 
         }
 
@@ -406,12 +433,23 @@ public:
             if (block->operation == Operation::D_Relu) {
                 return "D_Relu( " + print_block(block->first_block) + " )";
             }
-
-
         }
 
         throw std::exception();
     }
+};
+
+class CashSolve {
+public:
+    std::vector<std::pair<std::shared_ptr<BlockBP>, std::shared_ptr<BlockBP>>> cash;
+
+    CashSolve() {
+        cash = {};
+    };
+
+    CashSolve(std::vector<std::pair<std::shared_ptr<BlockBP>, std::shared_ptr<BlockBP>>> cash)
+        : cash{cash}
+    {}
 };
 
 class SolveBlockBP
@@ -420,11 +458,14 @@ public:
     std::shared_ptr<BlockBP> top_block;
     std::vector<std::pair<std::shared_ptr<Variable>, double>> variable_value {};
     std::vector<std::shared_ptr<BlockBP>> solved_blocks {};
+    std::vector<std::pair<std::shared_ptr<BlockBP>, std::shared_ptr<BlockBP>>> cash {}; // pair<original block , result value block>
+    
+    CashSolve& cash_in;
 
-    SolveBlockBP(std::shared_ptr<BlockBP> top_block, std::vector<std::pair<std::shared_ptr<Variable>, double>> variable_value)
-        : top_block{top_block}, variable_value{variable_value}
+    SolveBlockBP(std::shared_ptr<BlockBP> top_block, std::vector<std::pair<std::shared_ptr<Variable>, double>> variable_value, CashSolve& cash_in)
+        : top_block{top_block}, variable_value{variable_value}, cash_in{cash_in}
     {
-//        solve_start();
+        cash = cash_in.cash;
         solve_start2();
     }
 
@@ -432,17 +473,45 @@ public:
         solved_blocks.erase(std::find(solved_blocks.begin(), solved_blocks.end(), elem));
     }
 
+    void update_cash(std::shared_ptr<BlockBP> block) {
+        std::shared_ptr<BlockBP> original_block;
+        std::shared_ptr<BlockBP> value_block; // ??
+
+        if (!block->its_original_block) {
+            original_block = block->original_block;
+        } else {
+            original_block = block;
+        }
+
+        for (auto cash_pair : cash) {
+            if (cash_pair.first == original_block) {
+                return;
+            }
+        }
+
+        auto cash_pair = std::make_pair(original_block, block);
+        cash.push_back(cash_pair);
+    }
+
+    void change_cash() {
+        CashSolve new_cash = CashSolve{ cash };
+        CashSolve& new_cash_pointer = new_cash;
+        cash_in = new_cash_pointer;
+    }
+
     void make_value_block(std::shared_ptr<BlockBP> block, double value) {
         block->value = value;
-        block->var = nullptr;
         block->its_value_block = true;
         block->its_variable_block = false;
         block->its_operation_block = false;
         block->var_list = {};
+        // cash
+        update_cash(block);
     }
 
     void solve_start2() {
         solve2(top_block);
+        change_cash();
     }
 
     void binaryOperation(std::shared_ptr<BlockBP> block) {
@@ -477,6 +546,15 @@ public:
             return;
         }
 
+        for (auto cash_pair : cash) {
+            if (((cash_pair.first == block->original_block) && (!block->its_original_block)) || ((cash_pair.first == block) && (block->its_original_block)))
+            {
+                make_value_block(block, cash_pair.second->value);
+                break;
+            }
+        }
+
+
         if (block->its_value_block) {
             return;
         }
@@ -492,14 +570,15 @@ public:
 
         if (block->its_operation_block) {
             if (block->operation == Operation::Mul) {
-                if (block->first_block->its_value_block and block->second_block->its_value_block) {
+
+                if (block->first_block->its_value_block && block->second_block->its_value_block) {
                     double new_value = block->first_block->value * block->second_block->value;
                     make_value_block(block, new_value);
                     return;
                 }
 
-                if (    (block->first_block->its_value_block and block->first_block->value == 0) or
-                        (block->second_block->its_value_block and block->second_block->value == 0)) {
+                if (    (block->first_block->its_value_block && block->first_block->value == 0) ||
+                        (block->second_block->its_value_block && block->second_block->value == 0)) {
                     double new_value = 0;
                     make_value_block(block, new_value);
                     return;
@@ -510,7 +589,7 @@ public:
             }
 
             if (block->operation == Operation::Plus) {
-                if (block->first_block->its_value_block and block->second_block->its_value_block) {
+                if (block->first_block->its_value_block && block->second_block->its_value_block) {
                     double new_value = block->first_block->value + block->second_block->value;
                     make_value_block(block, new_value);
                     return;
@@ -523,7 +602,7 @@ public:
             }
 
             if (block->operation == Operation::Minus) {
-                if (block->first_block->its_value_block and block->second_block->its_value_block) {
+                if (block->first_block->its_value_block && block->second_block->its_value_block) {
                     double new_value = block->first_block->value - block->second_block->value;
                     make_value_block(block, new_value);
                     return;
@@ -536,7 +615,7 @@ public:
             }
 
             if (block->operation == Operation::Del) {
-                if (block->first_block->its_value_block and block->second_block->its_value_block) {
+                if (block->first_block->its_value_block && block->second_block->its_value_block) {
                     double new_value = block->first_block->value / block->second_block->value;
                     make_value_block(block, new_value);
                     return;
@@ -575,7 +654,6 @@ public:
                     make_value_block(block, value);
                     return;
                 }
-
                 onseOperation(block);
                 return;
             }
@@ -589,7 +667,37 @@ public:
                     make_value_block(block, value);
                     return;
                 }
+                onseOperation(block);
+                return;
+            }
 
+            if (block->operation == Operation::Sigmoid) {
+                if (block->first_block->its_value_block) {
+
+                    double value = 1 / (1 + exp(-block->first_block->value));
+                    make_value_block(block, value);
+                    return;
+                }
+                onseOperation(block);
+                return;
+            }
+
+            if (block->operation == Operation::Exp) {
+                if (block->first_block->its_value_block) {
+                    double value = exp(block->first_block->value);
+                    make_value_block(block, value);
+                    return;
+                }
+                onseOperation(block);
+                return;
+            }
+
+            if (block->operation == Operation::Ln) {
+                if (block->first_block->its_value_block) {
+                    double value = log(block->first_block->value);
+                    make_value_block(block, value);
+                    return;
+                }
                 onseOperation(block);
                 return;
             }
@@ -597,6 +705,5 @@ public:
         }
     }
 };
-
 
 #endif // BLOCKBP_H

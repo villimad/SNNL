@@ -96,9 +96,8 @@ public:
     > complited_first_layer {};
 
     std::vector<std::shared_ptr<BlockBP>> output_blocks {};
-    std::vector<std::shared_ptr<Variable>> weigth_variables {};
+    std::vector<std::shared_ptr<Variable>> weight_variables {};
     std::vector<std::shared_ptr<Variable>> input_variables {};
-
 
     Translator(NeuralNet neuralnet)
         : neuralnet{neuralnet}
@@ -147,7 +146,7 @@ public:
             for (int q1 = 0; q1 < neuron_size_second_layer; q1++) {
                 std::string name_weight = "[" + std::to_string(q) + "]" + "[" + std::to_string(q1) + "]";
                 std::shared_ptr<Variable> ones_weight = std::make_shared<Variable>(name_weight);
-                weigth_variables.push_back(ones_weight);
+                weight_variables.push_back(ones_weight);
                 std::shared_ptr<BlockBP> block_wight = std::make_shared<BlockBP>(ones_weight);
                 layers_weight.push_back(block_wight);
             }
@@ -155,7 +154,7 @@ public:
         }
 
         std::shared_ptr<Variable> displace_var = std::make_shared<Variable>("Neuron displace");
-        weigth_variables.push_back(displace_var);
+        weight_variables.push_back(displace_var);
         std::shared_ptr<BlockBP> neuron_displace = std::make_shared<BlockBP>(displace_var);
 
         LayersWeight layers_chain = LayersWeight(chain.first_layer, chain.second_layer, weight, neuron_displace);
@@ -204,7 +203,7 @@ public:
 
         std::vector<LayersWeight> layers_weight_system = weight_finder(layer);
 
-        if (not layer_ready_for_write(layer)) return;
+        if (!layer_ready_for_write(layer)) return;
 
         // sum and activation neurons in first layer
 

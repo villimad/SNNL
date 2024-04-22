@@ -11,7 +11,7 @@
 #include "newralnet.h"
 
 template<typename TypeName>
-TypeName randomNumber(TypeName n_min, TypeName n_max, int generator) {
+TypeName randomNumber(TypeName n_min, TypeName n_max, unsigned int generator) {
     // Get once random <TypeName> number
     std::uniform_real_distribution<TypeName> dist{n_min, n_max};
     std::default_random_engine engn{generator};
@@ -58,6 +58,7 @@ public:
     std::vector<std::pair<std::shared_ptr<Variable>, std::shared_ptr<BlockBP>>> backprop_block {};
 
     std::shared_ptr<BlockBP> lose_func;
+    CashSolve& cash = CashSolve{};
 
 
     Perseptron(int count_input, int count_output, int count_between_neurons, double edu_coef)
@@ -124,13 +125,12 @@ public:
         }
 
         lose_func = make_lose_func();
-        BackpropRec backprop = BackpropRec(lose_func, trans.weigth_variables);
+        BackpropRec backprop = BackpropRec(lose_func, trans.weight_variables);
 
         for (auto pair_bp : backprop.vec_diff) {
             backprop_block.push_back(pair_bp);
         }
-
-        weight_value = create_weight_value(trans.weigth_variables); // ?????? maybe not working
+        weight_value = create_weight_value(trans.weight_variables);
         input_variables = trans.input_variables;
     }
 
@@ -146,15 +146,17 @@ public:
 
         std::vector<std::shared_ptr<BlockBP>> solved_blocks {};
 
+        cash = CashSolve{}; // cash
+
         for (auto block : output_blocks) {
             CopyBlockBP copy_block = CopyBlockBP(block);
 
-            SolveBlockBP solved_block = SolveBlockBP(copy_block.res_block, variable_vec);
+            SolveBlockBP solved_block = SolveBlockBP(copy_block.res_block, variable_vec, cash);
             solved_blocks.push_back(solved_block.top_block);
         }
 
         for (auto block : solved_blocks) {
-            if (not block->its_value_block) {
+            if (!block->its_value_block) {
                 std::cout << "education_step() error" << std::endl;
                 throw std::exception();
             }
@@ -170,16 +172,13 @@ public:
 
         for (auto &weight_variable_and_value : weight_value) {
             std::shared_ptr<BlockBP> backprop = find_block_for_variable(backprop_block, weight_variable_and_value.first);
-
-
-
             CopyBlockBP copy_backprop = CopyBlockBP(backprop);
-            SolveBlockBP solved = SolveBlockBP(copy_backprop.res_block, variable_vec);
-            if (not solved.top_block->its_value_block) {
+            SolveBlockBP solved = SolveBlockBP(copy_backprop.res_block, variable_vec, cash);
+
+            if (!solved.top_block->its_value_block) {
                 std::cout << "Solved block not value" << std::endl;
                 throw std::exception();
             }
-
 
 //            PrinterBlockBP printer = PrinterBlockBP(solved.top_block);
 
@@ -194,10 +193,9 @@ public:
 
         CopyBlockBP copy_lose = CopyBlockBP(lose_func);
 
-        SolveBlockBP solve_lose = SolveBlockBP(copy_lose.res_block, variable_vec);
+        SolveBlockBP solve_lose = SolveBlockBP(copy_lose.res_block, variable_vec, cash);
 
         std::cout << "Lose func = " << solve_lose.top_block->value << std::endl;
-
 
         std::cout << "Edu step Complited!" << std::endl;
     }

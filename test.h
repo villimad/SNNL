@@ -7,6 +7,9 @@ class Test
 public:
     void run();
     void diff();
+    void diffForwardSimpleTest();
+    void diffForward();
+    void diffForwardRecTest();
     void diffVecSum();
     void reluSimpleTest();
     void diffReluSimpleTest();
@@ -17,6 +20,7 @@ public:
     void plusMulSimpleTest();
     void plusMulSimpleTestZero();
     void perseptronTest();
+    void perseptron2Test();
 };
 
 #endif // TEST_H
