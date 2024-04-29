@@ -11,6 +11,29 @@
 #define TEST Test test; test.run();
 
 using namespace std;
+//
+//class B {
+//public:
+//    int number = 1;
+//    B() {};
+//};
+//
+//
+//class A
+//{
+//public:
+//    B& k = B();
+//
+//    A(B& b)
+//    {
+//        k.number = 8;
+//        B& g = k;
+//        b = g;
+//    };
+//};
+//
+
+
 
 int main()
 {
