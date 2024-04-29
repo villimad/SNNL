@@ -67,21 +67,8 @@ private:
             }
 
             if (block->its_operation_block) {
-                if (block->its_binary_operation()) {
-                    block_tree.push_back(std::make_shared<BlockBPDiff>(block->first_block));
-                    block_tree.push_back(std::make_shared<BlockBPDiff>(block->second_block));
-                    blocks_in_work.push_back(block->first_block);
-                    blocks_in_work.push_back(block->second_block);
-                    continue;
-                }
-                if (block->operation == Operation::VecSum) {
-                    // writing
-                    continue;
-                }
-                if (!block->its_binary_operation()) {
-                    block_tree.push_back(std::make_shared<BlockBPDiff>(block->first_block));
-                    blocks_in_work.push_back(block->first_block);
-                    continue;
+                if () {
+                
                 }
             }
         }
@@ -91,7 +78,101 @@ private:
 
     void diff(std::shared_ptr<Variable> var) {
         working_block_tree = block_tree; 
-        
+
+        /*
+        //while (all_diff_complited == false) {
+        //    all_diff_complited = true;
+        //    for (int q = working_block_tree.size() - 1; q > -1; q--) {
+
+        //        if (working_block_tree.at(q)->diff_complited) {
+        //            continue;
+        //        }
+
+        //        all_diff_complited = false;
+        //        
+        //        // diff part
+        //        if (working_block_tree.at(q)->block->its_value_block) {
+        //            diffValue(var, working_block_tree.at(q));
+        //            break;
+        //        }
+        //        if (working_block_tree.at(q)->block->its_variable_block) {
+        //            diffVariable(var, working_block_tree.at(q));
+        //            break;
+        //        }
+        //        if (working_block_tree.at(q)->block->its_operation_block) {
+        //            // apruving ???
+        //            if (working_block_tree.at(q)->block->its_binary_operation()) {
+        //                if (!(diff_apruv(working_block_tree.at(q)->block->first_block)
+        //                    && diff_apruv(working_block_tree.at(q)->block->second_block)))
+        //                {
+        //                    continue;
+        //                }
+        //            }
+        //            
+        //            std::vector<BlockBP> vec{}; //
+
+        //            if ((!(working_block_tree.at(q)->block->its_binary_operation()))
+        //                && (working_block_tree.at(q)->block->operation == Operation::VecSum))  
+        //            {
+        //                bool apruving_vec = true;
+        //                for (auto elem_vec : working_block_tree.at(q)->block->vec_blocks) {
+        //                    for (auto elem_tree : working_block_tree) {
+        //                        if (elem_tree->block == elem_vec && !elem_tree->diff_complited) {
+        //                            apruving_vec = false;
+        //                            break;
+        //                        }
+        //                    }
+        //                }
+        //                if (apruving_vec == false) continue;
+        //            }
+
+        //            std::cout << q << std::endl;
+
+        //            if (!(working_block_tree.at(q)->block->its_binary_operation())
+        //                && (working_block_tree.at(q)->block->operation != Operation::VecSum))
+        //            {
+        //                if (!(diff_apruv(working_block_tree.at(q)->block->first_block))) continue;
+        //            }
+
+        //            if (working_block_tree.at(q)->block->operation == Operation::VecSum) {
+        //                diffVecSum(var, working_block_tree.at(q));
+        //                break;
+        //            }
+
+        //            if (working_block_tree.at(q)->block->operation == Operation::Mul) {
+        //                diffMul(var, working_block_tree.at(q));
+        //                break;
+        //            }
+        //            if (working_block_tree.at(q)->block->operation == Operation::Plus) {
+        //                diffPlus(var, working_block_tree.at(q));
+        //                break;
+        //            }
+        //            if (working_block_tree.at(q)->block->operation == Operation::Del) {
+        //                diffDel(var, working_block_tree.at(q));
+        //                break;
+        //            }
+        //            if (working_block_tree.at(q)->block->operation == Operation::Minus) {
+        //                diffMinus(var, working_block_tree.at(q));
+        //                break;
+        //            }
+        //            if (working_block_tree.at(q)->block->operation == Operation::Relu) {
+        //                diffRelu(var, working_block_tree.at(q));
+        //                break;
+        //            }
+        //            if (working_block_tree.at(q)->block->operation == Operation::Sigmoid) {
+        //                diffSigmoid(var, working_block_tree.at(q));
+        //                break;
+        //            }
+        //            if (working_block_tree.at(q)->block->operation == Operation::Ln) {
+        //                diffLn(var, working_block_tree.at(q));
+        //                break;
+        //            }
+        //        }
+        //    }    
+        //}
+
+        */
+
         for (unsigned int q = working_block_tree.size() - 1; q > -1; q--) {
             std::shared_ptr<BlockBPDiff> tree_block = working_block_tree.at(q); // no diff_complited
 
@@ -141,6 +222,10 @@ private:
 
         std::pair<std::shared_ptr<Variable>, std::shared_ptr<BlockBP>> result_pair = std::make_pair(var, working_block_tree.at(working_block_tree.size() - 1)->block);
         vec_diff.push_back(result_pair);
+    }
+
+    bool diff_apruv(std::shared_ptr<BlockBP> block) {
+        return true;
     }
 
     void diffVariable(std::shared_ptr<Variable> var, std::shared_ptr<BlockBPDiff> found_block, unsigned int number) {

@@ -45,6 +45,7 @@ public:
         its_operation_block = block->its_operation_block;
         its_original_block = false;
         original_block = block;
+
         for (auto q : block->vec_blocks) {
             vec_blocks.push_back(q);
         }
@@ -105,11 +106,11 @@ public:
     }
 
     std::shared_ptr<BlockBP> first_block, second_block;
-
     double value = 0;
     Operation operation = Operation::Plus;
     std::shared_ptr<Variable> var;
     std::vector<std::shared_ptr<BlockBP>> vec_blocks {};
+
     bool its_variable_block = false;
     bool its_value_block = false;
     bool its_operation_block = false;
@@ -280,7 +281,6 @@ public:
         return res_block;
     }
 
-
     std::shared_ptr<BlockBP> diffSigmoid(std::shared_ptr<Variable> var, std::shared_ptr<BlockBP> block) {
         double minus_one = -1;
         std::shared_ptr<BlockBP> minus_one_block = std::make_shared<BlockBP>(minus_one);
@@ -311,7 +311,6 @@ public:
 
     std::shared_ptr<BlockBP> diff_value_block(std::shared_ptr<BlockBP> block) {
         if (!block->its_value_block) {
-
             throw std::exception();
         }
         return std::make_shared<BlockBP>(0);
@@ -363,7 +362,6 @@ public:
             if (block->operation == Operation::Ln) {
                 return diffLn(var, block->first_block);
             }
-
         }
 
         if (block->its_variable_block) {
@@ -505,6 +503,7 @@ public:
         block->its_variable_block = false;
         block->its_operation_block = false;
         block->var_list = {};
+
         // cash
         update_cash(block);
     }
@@ -540,6 +539,7 @@ public:
     }
 
     void solve2(std::shared_ptr<BlockBP> block) {
+
         if (std::count(solved_blocks.begin(), solved_blocks.end(), block) == 0) {
             solved_blocks.push_back(block);
         } else {
@@ -553,7 +553,6 @@ public:
                 break;
             }
         }
-
 
         if (block->its_value_block) {
             return;
@@ -570,7 +569,6 @@ public:
 
         if (block->its_operation_block) {
             if (block->operation == Operation::Mul) {
-
                 if (block->first_block->its_value_block && block->second_block->its_value_block) {
                     double new_value = block->first_block->value * block->second_block->value;
                     make_value_block(block, new_value);
@@ -701,9 +699,12 @@ public:
                 onseOperation(block);
                 return;
             }
+
             throw std::exception();
         }
     }
 };
+
+
 
 #endif // BLOCKBP_H

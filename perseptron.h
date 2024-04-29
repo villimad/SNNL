@@ -130,12 +130,15 @@ public:
         for (auto pair_bp : backprop.vec_diff) {
             backprop_block.push_back(pair_bp);
         }
+
         weight_value = create_weight_value(trans.weight_variables);
         input_variables = trans.input_variables;
     }
 
     void education_step(std::vector<std::pair<std::shared_ptr<Variable>, double>> input_value, std::vector<std::pair<std::shared_ptr<Variable>, double>> test_value) {
         std::vector<std::pair<std::shared_ptr<Variable>, double>> variable_vec {};
+
+     
         for (auto block : weight_value) {
             variable_vec.push_back(block);
         }
@@ -172,6 +175,7 @@ public:
 
         for (auto &weight_variable_and_value : weight_value) {
             std::shared_ptr<BlockBP> backprop = find_block_for_variable(backprop_block, weight_variable_and_value.first);
+
             CopyBlockBP copy_backprop = CopyBlockBP(backprop);
             SolveBlockBP solved = SolveBlockBP(copy_backprop.res_block, variable_vec, cash);
 
