@@ -36,12 +36,15 @@
 *.cmake
 *.filters
 *.user
+*.pro
+
 
 CMakeFiles/
 Debug/
 neural.dir/
 
 x64/
+.vs/
 
 CMakeCache.txt
-
+text.txt
