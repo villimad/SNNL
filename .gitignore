@@ -35,6 +35,7 @@
 *.sln
 *.cmake
 *.filters
+*.user
 
 CMakeFiles/
 Debug/
