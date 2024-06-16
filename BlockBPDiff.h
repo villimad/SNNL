@@ -91,6 +91,7 @@ public:
 			if (!tree_element->its_top_block) {
 				std::shared_ptr<TreeElement> rewrite_el = *(block_tree.begin() + tree_element->parent_number);
 				std::shared_ptr<TreeElement> new_tree_el = std::make_shared<TreeElement>(rewrite_el, child_number);
+				block_tree.erase(block_tree.begin() + tree_element->parent_number);
 				block_tree.insert(block_tree.begin() + tree_element->parent_number, new_tree_el);
 			}
 
