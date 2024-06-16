@@ -21,6 +21,7 @@ public:
     void plusMulSimpleTestZero();
     void perseptronTest();
     void perseptron2Test();
+    void block_treeTest();
 };
 
 #endif // TEST_H
