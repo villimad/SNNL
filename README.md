@@ -5,9 +5,9 @@ The framework was invented to build an OOP-oriented neural network structure.
 
 The library structure is divided into three main parts:
 
-1) SNL MathCore is the part responsible for the mathematical backend of neural network training
-2) SNL Neural Network Constructor is the part responsible for describing a neural network in a class-oriented OOP structure.
-3) SNL Network Translator is the part responsible for broadcasting from classes to the library's mathematical backend system.
+1) SNNL MathCore is the part responsible for the mathematical backend of neural network training
+2) SNNL Neural Network Constructor is the part responsible for describing a neural network in a class-oriented OOP structure.
+3) SNNL Network Translator is the part responsible for broadcasting from classes to the library's mathematical backend system.
 
 Provisions:
 
