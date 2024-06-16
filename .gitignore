@@ -38,6 +38,7 @@
 *.user
 *.pro
 
+
 CMakeFiles/
 Debug/
 neural.dir/
