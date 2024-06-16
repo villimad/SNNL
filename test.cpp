@@ -37,6 +37,31 @@ void Test::block_treeTest() {
     BackpropForward cl = BackpropForward{ block1 };
     cl.main();
 
+    std::cout << cl.block_tree.size() << std::endl;
+
+    std::cout << "Var1 " << var1 << std::endl;
+    std::cout << "Value1 " << value1 << std::endl;
+    std::cout << "Block1 " << block1 << std::endl;
+
+    std::vector<std::shared_ptr<BlockBP>> vec_blocks{ var1, value1, block1 };
+
+    for (auto block : cl.block_tree) {
+        for (auto block_in_vec : vec_blocks) {
+            if (block->block == var1) {
+                std::cout << "Var1" << std::endl;
+                break;
+            }
+            if (block->block == value1) {
+                std::cout << "Value1" << std::endl;
+                break;
+            }
+            if (block->block == block1) {
+                std::cout << "Block1" << std::endl;
+                break;
+            }
+        }
+    }
+
     std::cout << "End" << std::endl;
 }
 

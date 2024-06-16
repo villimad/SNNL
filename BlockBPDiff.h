@@ -54,7 +54,7 @@ struct TreeElement
 class BackpropForward {
 public:
 	std::shared_ptr<BlockBP> top_block;
-	std::vector<std::shared_ptr<TreeElement>> block_tree;
+	std::vector<std::shared_ptr<TreeElement>> block_tree {};
 
 	BackpropForward(std::shared_ptr<BlockBP> top_block) 
 		:top_block{top_block}
