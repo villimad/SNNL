@@ -7,6 +7,7 @@ struct DiffTreeElement {
 	bool diff_completed;
 	std::vector<unsigned int> child_numbers;
 	std::shared_ptr<BlockBP> block;
+	std::shared_ptr<BlockBP> diff_block;
 
 	DiffTreeElement()
 	{
@@ -54,7 +55,7 @@ struct TreeElement
 class BackpropForward {
 public:
 	std::shared_ptr<BlockBP> top_block;
-	std::vector<std::shared_ptr<TreeElement>> block_tree;
+	std::vector<std::shared_ptr<TreeElement>> block_tree {};
 
 	BackpropForward(std::shared_ptr<BlockBP> top_block) 
 		:top_block{top_block}
@@ -91,6 +92,7 @@ public:
 			if (!tree_element->its_top_block) {
 				std::shared_ptr<TreeElement> rewrite_el = *(block_tree.begin() + tree_element->parent_number);
 				std::shared_ptr<TreeElement> new_tree_el = std::make_shared<TreeElement>(rewrite_el, child_number);
+				block_tree.erase(block_tree.begin() + tree_element->parent_number);
 				block_tree.insert(block_tree.begin() + tree_element->parent_number, new_tree_el);
 			}
 
@@ -125,6 +127,16 @@ public:
 
 		}
 
+	}
+
+	void diffAll(std::shared_ptr<Variable> var)  {
+		for (int q = block_tree.size() - 1; q > -1; q--) {
+			
+		}
+	}
+
+	void diffOnesBlock(std::shared_ptr<TreeElement> block, std::shared_ptr<Variable> var) {
+		
 	}
 
 };
