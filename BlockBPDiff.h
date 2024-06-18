@@ -7,6 +7,7 @@ struct DiffTreeElement {
 	bool diff_completed;
 	std::vector<unsigned int> child_numbers;
 	std::shared_ptr<BlockBP> block;
+	std::shared_ptr<BlockBP> diff_block;
 
 	DiffTreeElement()
 	{
@@ -126,6 +127,16 @@ public:
 
 		}
 
+	}
+
+	void diffAll(std::shared_ptr<Variable> var)  {
+		for (int q = block_tree.size() - 1; q > -1; q--) {
+			
+		}
+	}
+
+	void diffOnesBlock(std::shared_ptr<TreeElement> block, std::shared_ptr<Variable> var) {
+		
 	}
 
 };
